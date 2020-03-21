@@ -26,10 +26,20 @@ const insertData = (data) => {
     addGitCard(gitCardContent);
 }
 
+const showEmptyMessage = () => {
+    gitCardContainer.innerHTML = `<p>Nenhum gitCard buscado</p>`;
+} 
+
 const getGitHubInfo = () => {
     const username = inputText.value;
+    
+    if (username === '') {
+        showEmptyMessage();
+        return;
+    }
 
-    console.log('executou');
+    let errorMessageControl = 0; // Impede que o alert seja exibido mais de uma vez na mesma resposta de erro.
+
     var url = 'https://api.github.com/users/' + username;
 
     var ajax = new XMLHttpRequest();
@@ -39,6 +49,9 @@ const getGitHubInfo = () => {
             let response = JSON.parse(this.responseText);
 
             insertData(response);
+        } else if (this.status == 404 && errorMessageControl < 1) {
+            alert('Usuário não encontrado!');
+            errorMessageControl++;
         }
     };
 
